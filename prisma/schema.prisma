@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  firebaseUid String @unique
+  email     String?
+  name      String?
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  attendances Attendance[]
+}
+
+model Attendance {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  type      String   // "in" or "out"
+  timestamp DateTime @default(now())
+  note      String?
+}
+
+model Payroll {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  month     String
+  gross     Float
+  deductions Float   @default(0)
+  net       Float
+  createdAt DateTime @default(now())
+}
