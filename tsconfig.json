@@ -9,9 +9,12 @@
     "target": "es2019",
     "sourceMap": true,
     "outDir": "dist",
-    "baseUrl": ".",
+    "baseUrl": "./",
     "incremental": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "src/":["src/*"]
+    }
   },
   "include": [
     "src/**/*"
