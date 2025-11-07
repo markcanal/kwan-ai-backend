@@ -9,32 +9,64 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  firebaseUid String @unique
-  email     String?
-  name      String?
-  role      String   @default("user")
-  createdAt DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  firebaseUid String   @unique
+  email       String?
+  name        String?
+  role        String   @default("user")
+  createdAt   DateTime @default(now())
+  hireDate    DateTime @default(now())
+
+  baseSalary  Float @default(0)
+  yearlyBonus Float @default(0) // management decided bonus per year
+  clientCount Int   @default(1) // number of assigned clients
+  clientBonus Float @default(0) // total monthly client bonus (set by management)
+
   attendances Attendance[]
-  payrolls Payroll[]
+  payrolls    Payroll[]
 }
 
 model Attendance {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
-  type      String   // "in" or "out"
+  type      String // "in" or "out"
   timestamp DateTime @default(now())
   note      String?
+
+  holiday   Holiday? @relation(fields: [holidayId], references: [id])
+  holidayId Int?
+}
+
+model Holiday {
+  id          Int          @id @default(autoincrement())
+  name        String
+  date        DateTime
+  type        String // "regular" | "special" | "double"
+  createdAt   DateTime     @default(now())
+  attendances Attendance[]
 }
 
 model Payroll {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
-  month     String
-  gross     Float
-  deductions Float   @default(0)
-  net       Float
-  createdAt DateTime @default(now())
+  id                Int      @id @default(autoincrement())
+  user              User     @relation(fields: [userId], references: [id])
+  userId            Int
+  month             String
+  baseSalary        Float    @default(0)
+  yearlyBonus       Float    @default(0)
+  clientBonus       Float    @default(0)
+  holidayPay        Float    @default(0)
+  overtimePay       Float    @default(0)
+  nightDiffPay      Float    @default(0)
+  totalHours        Float    @default(0)
+  overtimeHours     Float    @default(0)
+  nightHours        Float    @default(0)
+  gross             Float
+  deductions        Float    @default(0)
+  net               Float
+  sss               Float    @default(0)
+  philhealth        Float    @default(0)
+  pagibig           Float    @default(0)
+  isThirteenthMonth Boolean  @default(false)
+  createdAt         DateTime @default(now())
 }
