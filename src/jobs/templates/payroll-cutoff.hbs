@@ -1,0 +1,54 @@
+<html>
+
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <h2>Payroll Summary</h2>
+    <p>Hello {{name}},</p>
+    <p>Here’s your payroll breakdown for this cutoff period:</p>
+
+    <table cellpadding="6" cellspacing="0" border="1"
+        style="border-collapse: collapse; margin-top: 10px; width: 100%; max-width: 600px;">
+        <tr style="background-color: #f3f3f3;">
+            <th align="left">Description</th>
+            <th align="right">Amount (₱)</th>
+        </tr>
+
+        <tr>
+            <td>Base Salary ({{daysWorked}} days / {{totalHours}} hrs)</td>
+            <td align="right">{{baseSalary}}</td>
+        </tr>
+        <tr>
+            <td>Overtime Pay ({{overtimeHours}} hrs)</td>
+            <td align="right">{{overtimePay}}</td>
+        </tr>
+        <tr>
+            <td>Night Differential</td>
+            <td align="right">{{nightDiff}}</td>
+        </tr>
+
+        <tr>
+            <td colspan="2"><strong>Deductions</strong></td>
+        </tr>
+        <tr>
+            <td>SSS</td>
+            <td align="right">-{{sss}}</td>
+        </tr>
+        <tr>
+            <td>PhilHealth</td>
+            <td align="right">-{{philhealth}}</td>
+        </tr>
+        <tr>
+            <td>Pag-IBIG</td>
+            <td align="right">-{{pagibig}}</td>
+        </tr>
+
+        <tr style="background-color: #f3f3f3;">
+            <td><strong>Net Pay</strong></td>
+            <td align="right"><strong>₱{{netPay}}</strong></td>
+        </tr>
+    </table>
+
+    <p style="margin-top: 20px;">Credited to your registered bank account.</p>
+    <p>Thank you,<br />HR Department</p>
+</body>
+
+</html>
