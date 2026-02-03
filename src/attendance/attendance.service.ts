@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { subHours, startOfDay } from 'date-fns';
 
@@ -7,10 +7,30 @@ export class AttendanceService {
   constructor(private prisma: PrismaService) {}
 
   async timeIn(userId: number, note?: string) {
+    // Check if user already has an open "in" record
+    const lastRecord = await this.prisma.attendance.findFirst({
+      where: { userId },
+      orderBy: { timestamp: 'desc' },
+    });
+
+    if (lastRecord?.type === 'in') {
+      throw new BadRequestException('User already clocked in. Please clock out first.');
+    }
+
     return this.prisma.attendance.create({ data: { userId, type: 'in', note } });
   }
 
   async timeOut(userId: number, note?: string) {
+    // Check if user has an open "in" record
+    const lastRecord = await this.prisma.attendance.findFirst({
+      where: { userId },
+      orderBy: { timestamp: 'desc' },
+    });
+
+    if (!lastRecord || lastRecord.type !== 'in') {
+      throw new BadRequestException('Cannot clock out without clocking in first.');
+    }
+
     return this.prisma.attendance.create({ data: { userId, type: 'out', note } });
   }
 

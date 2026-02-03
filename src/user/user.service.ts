@@ -22,6 +22,12 @@ export class UserService {
     });
   }
 
+  async getUserByFirebaseUid(firebaseUid: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { firebaseUid },
+    });
+  }
+
   async list(): Promise<User[]> {
     return this.prisma.user.findMany();
   }
