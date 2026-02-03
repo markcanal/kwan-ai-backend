@@ -1,5 +1,5 @@
 # CodeQL Advanced - configured for a TypeScript (Node/Nest) backend (kwan-ai-backend)
-# Place this file at .github/workflows/codeql-advanced.yml
+# Place this file at .github/workflows/codeql.yml
 
 name: "CodeQL Advanced"
 
