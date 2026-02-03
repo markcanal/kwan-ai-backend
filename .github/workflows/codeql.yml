@@ -1,15 +1,15 @@
 # CodeQL Advanced - configured for a TypeScript (Node/Nest) backend (kwan-ai-backend)
-# Place this file at .github/workflows/codeql.yml
+# Place this file at .github/workflows/codeql-advanced.yml
 
 name: "CodeQL Advanced"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   schedule:
-    - cron: '43 8 * * 6'
+    - cron: "43 8 * * 6"
 
 jobs:
   analyze:
@@ -26,7 +26,7 @@ jobs:
       matrix:
         include:
           - language: javascript-typescript
-            build-mode: manual
+            build-mode: none
 
     steps:
       - name: Checkout repository
@@ -36,35 +36,35 @@ jobs:
         if: matrix.language == 'javascript-typescript'
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4
-        with:
-          languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
-          # Optionally extend queries:
-          # queries: +security-extended,security-and-quality
+          node-version: "18"
+          cache: "npm"
 
       - name: Install dependencies
-        if: matrix.build-mode == 'manual' && matrix.language == 'javascript-typescript'
+        if: matrix.language == 'javascript-typescript'
         run: |
           npm ci
 
       - name: Prisma generate (if present)
-        if: matrix.build-mode == 'manual' && matrix.language == 'javascript-typescript'
+        if: matrix.language == 'javascript-typescript'
         run: |
           if npm run | grep -q "prisma:generate"; then
             npm run prisma:generate
           fi
 
-      - name: Build
-        if: matrix.build-mode == 'manual' && matrix.language == 'javascript-typescript'
+      - name: Build (compile TypeScript if present)
+        if: matrix.language == 'javascript-typescript'
         run: |
           npm run build --if-present
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          # Optionally extend queries:
+          # queries: +security-extended,security-and-quality
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
         with:
-          category: "/language:${{ matrix.language }}"
+          category: "/language:${{matrix.language}}"
