@@ -1,0 +1,563 @@
+{
+  "info": {
+    "name": "Kwan-AI Backend API",
+    "description": "Attendance & Payroll Management System API\n\nBefore using this collection:\n1. Set up environment variables (see Variables tab)\n2. Get a Firebase token and set it in the environment\n3. Create a user profile first using POST /users\n4. Use that user to test attendance and payroll endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "firebaseToken",
+      "value": "YOUR_FIREBASE_TOKEN_HERE",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "API Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "status"]
+            },
+            "description": "Check if API is online"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/status",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "status"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ok\": true,\n  \"status\": \"online\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Check API and database health"
+          },
+          "response": [
+            {
+              "name": "Healthy",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/health",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "health"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"ok\",\n  \"timestamp\": \"2024-02-03T10:00:00.000Z\",\n  \"services\": {\n    \"database\": \"healthy\",\n    \"api\": \"healthy\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Sync User from Firebase",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{firebaseToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/sync",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "sync"]
+            },
+            "description": "Synchronize user from Firebase to local database. Creates user if not exists."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{firebaseToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/sync",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "sync"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"firebaseUid\": \"firebase_abc123\",\n  \"email\": \"juan.delacruz@example.com\",\n  \"name\": \"Juan Dela Cruz\",\n  \"avatarUrl\": null,\n  \"role\": \"user\",\n  \"createdAt\": \"2024-02-03T10:00:00.000Z\",\n  \"hireDate\": \"2024-02-03T10:00:00.000Z\",\n  \"baseSalary\": 0,\n  \"yearlyBonus\": 0,\n  \"clientCount\": 1,\n  \"clientBonus\": 0\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create User Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{firebaseToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan Dela Cruz\",\n  \"email\": \"juan.delacruz@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Create a user profile linked to Firebase UID. If user already exists, returns existing profile."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{firebaseToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Juan Dela Cruz\",\n  \"email\": \"juan.delacruz@example.com\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/users",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["users"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"firebaseUid\": \"firebase_abc123\",\n  \"email\": \"juan.delacruz@example.com\",\n  \"name\": \"Juan Dela Cruz\",\n  \"avatarUrl\": null,\n  \"role\": \"user\",\n  \"createdAt\": \"2024-02-03T10:00:00.000Z\",\n  \"hireDate\": \"2024-02-03T10:00:00.000Z\",\n  \"baseSalary\": 0,\n  \"yearlyBonus\": 0,\n  \"clientCount\": 1,\n  \"clientBonus\": 0\n}"
+            }
+          ]
+        },
+        {
+          "name": "List All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Get a list of all registered users"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/users",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["users"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"firebaseUid\": \"firebase_abc123\",\n    \"email\": \"juan.delacruz@example.com\",\n    \"name\": \"Juan Dela Cruz\",\n    \"avatarUrl\": null,\n    \"role\": \"user\",\n    \"createdAt\": \"2024-02-03T10:00:00.000Z\",\n    \"hireDate\": \"2024-02-03T10:00:00.000Z\",\n    \"baseSalary\": 30000,\n    \"yearlyBonus\": 12000,\n    \"clientCount\": 1,\n    \"clientBonus\": 0\n  }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Attendance",
+      "item": [
+        {
+          "name": "Clock In",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{firebaseToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"note\": \"Starting work for the day\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/timein",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "timein"]
+            },
+            "description": "Record clock-in time. Prevents duplicate clock-ins."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{firebaseToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"note\": \"Starting work for the day\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/attendance/timein",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["attendance", "timein"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 123,\n  \"userId\": 1,\n  \"type\": \"in\",\n  \"timestamp\": \"2024-02-03T09:00:00.000Z\",\n  \"note\": \"Starting work for the day\",\n  \"holidayId\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Clock Out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{firebaseToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"note\": \"End of workday\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/timeout",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "timeout"]
+            },
+            "description": "Record clock-out time. Requires prior clock-in."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{firebaseToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"note\": \"End of workday\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/attendance/timeout",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["attendance", "timeout"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 124,\n  \"userId\": 1,\n  \"type\": \"out\",\n  \"timestamp\": \"2024-02-03T17:00:00.000Z\",\n  \"note\": \"End of workday\",\n  \"holidayId\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Hours Worked",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{firebaseToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/attendance/hours?date=2024-02-03",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "hours"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2024-02-03",
+                  "description": "Date in YYYY-MM-DD format (optional, defaults to today)"
+                }
+              ]
+            },
+            "description": "Calculate total hours worked for a specific date"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{firebaseToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/attendance/hours?date=2024-02-03",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["attendance", "hours"],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "2024-02-03"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"hours\": 8.0\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Payroll",
+      "item": [
+        {
+          "name": "Compute Monthly Payroll",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"month\": \"2024-02\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/payroll/compute",
+              "host": ["{{baseUrl}}"],
+              "path": ["payroll", "compute"]
+            },
+            "description": "Calculate payroll for a specific user and month"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": 1,\n  \"month\": \"2024-02\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/payroll/compute",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["payroll", "compute"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"payroll\": {\n    \"id\": 1,\n    \"userId\": 1,\n    \"month\": \"2024-02\",\n    \"baseSalary\": 0,\n    \"yearlyBonus\": 0,\n    \"clientBonus\": 0,\n    \"holidayPay\": 0,\n    \"overtimePay\": 0,\n    \"nightDiffPay\": 0,\n    \"totalHours\": 176,\n    \"overtimeHours\": 0,\n    \"nightHours\": 0,\n    \"gross\": 30000,\n    \"deductions\": 2500,\n    \"net\": 27500,\n    \"sss\": 1125,\n    \"philhealth\": 875,\n    \"pagibig\": 500,\n    \"isThirteenthMonth\": false,\n    \"createdAt\": \"2024-02-03T10:00:00.000Z\"\n  },\n  \"summary\": {\n    \"user\": \"Juan Dela Cruz\",\n    \"month\": \"2024-02\",\n    \"totalHours\": 176,\n    \"overtimeHours\": 0,\n    \"nightHours\": 0,\n    \"holidayHours\": 0,\n    \"dailyRate\": 1363.64,\n    \"hourlyRate\": 170.45,\n    \"gross\": 30000,\n    \"deductions\": 2500,\n    \"net\": 27500\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Payroll Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/payroll/report?month=2024-02",
+              "host": ["{{baseUrl}}"],
+              "path": ["payroll", "report"],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2024-02",
+                  "description": "Month in YYYY-MM format"
+                }
+              ]
+            },
+            "description": "Get payroll records for all users in a specific month"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/payroll/report?month=2024-02",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["payroll", "report"],
+                  "query": [
+                    {
+                      "key": "month",
+                      "value": "2024-02"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"userId\": 1,\n    \"month\": \"2024-02\",\n    \"baseSalary\": 0,\n    \"yearlyBonus\": 0,\n    \"clientBonus\": 0,\n    \"holidayPay\": 0,\n    \"overtimePay\": 0,\n    \"nightDiffPay\": 0,\n    \"totalHours\": 176,\n    \"overtimeHours\": 0,\n    \"nightHours\": 0,\n    \"gross\": 30000,\n    \"deductions\": 2500,\n    \"net\": 27500,\n    \"sss\": 1125,\n    \"philhealth\": 875,\n    \"pagibig\": 500,\n    \"isThirteenthMonth\": false,\n    \"createdAt\": \"2024-02-03T10:00:00.000Z\",\n    \"user\": {\n      \"id\": 1,\n      \"firebaseUid\": \"firebase_abc123\",\n      \"email\": \"juan.delacruz@example.com\",\n      \"name\": \"Juan Dela Cruz\",\n      \"role\": \"user\"\n    }\n  }\n]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

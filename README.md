@@ -32,7 +32,21 @@ Current test coverage:
 
 ## API Documentation
 Once the server is running, visit:
-- **Swagger UI:** `http://localhost:3000/api/docs`
+- **Swagger UI:** `http://localhost:3000/api/docs` - Interactive API documentation with examples
+- **Health Check:** `http://localhost:3000/api/health`
+- **Status:** `http://localhost:3000/api/status`
+
+### Testing with Postman
+1. **Import Collection:** Import `postman_collection.json` into Postman
+2. **Set Environment:** Create environment with `baseUrl` and `firebaseToken` variables
+3. **Start Testing:** Use pre-configured requests with sample payloads
+
+📚 **See [API_GUIDE.md](./API_GUIDE.md) for:**
+- Complete endpoint documentation
+- Request/response examples
+- cURL commands
+- Authentication guide
+- Troubleshooting tips
 - **Health Check:** `http://localhost:3000/api/health`
 - **Status:** `http://localhost:3000/api/status`
 
