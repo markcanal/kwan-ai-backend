@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import {
   computeSSSContribution,
@@ -21,16 +21,23 @@ export class PayrollService {
     const start = startOfMonth(new Date(year, monthNumber - 1));
     const end = endOfMonth(start);
 
-    // --- Fetch user and attendance records
+    // --- Fetch user (optimized: no include)
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      include: { attendances: true },
     });
-    if (!user) throw new Error('User not found');
+    
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
 
-    const attendances = user.attendances.filter(
-      (a) => a.timestamp >= start && a.timestamp <= end,
-    );
+    // --- Fetch attendance records with proper filtering (fixes N+1 query)
+    const attendances = await this.prisma.attendance.findMany({
+      where: {
+        userId,
+        timestamp: { gte: start, lte: end }
+      },
+      orderBy: { timestamp: 'asc' }
+    });
 
     const holidays = await this.prisma.holiday.findMany({
       where: { date: { gte: start, lte: end } },
@@ -43,6 +50,11 @@ export class PayrollService {
     // --- Compute work hours
     const { totalHours, overtimeHours, nightHours, holidayHours } =
       this.computeWorkHours(attendances, holidays);
+
+    // --- Validate work hours
+    if (isNaN(totalHours) || totalHours < 0) {
+      throw new BadRequestException(`Invalid work hours calculated: ${totalHours}`);
+    }
 
     // --- Daily and hourly rate (exclude weekends)
     const workingDays = this.countWorkingDays(year, monthNumber);
