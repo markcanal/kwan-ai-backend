@@ -1,5 +1,5 @@
 # CodeQL Advanced - configured for a TypeScript (Node/Nest) backend (kwan-ai-backend)
-# Place this file at .github/workflows/codeql-advanced.yml
+# Place this file at .github/workflows/codeql.yml
 
 name: "CodeQL Advanced"
 
@@ -26,7 +26,7 @@ jobs:
       matrix:
         include:
           - language: javascript-typescript
-            build-mode: none
+            build-mode: manual
 
     steps:
       - name: Checkout repository
@@ -39,23 +39,6 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: Install dependencies
-        if: matrix.language == 'javascript-typescript'
-        run: |
-          npm ci
-
-      - name: Prisma generate (if present)
-        if: matrix.language == 'javascript-typescript'
-        run: |
-          if npm run | grep -q "prisma:generate"; then
-            npm run prisma:generate
-          fi
-
-      - name: Build (compile TypeScript if present)
-        if: matrix.language == 'javascript-typescript'
-        run: |
-          npm run build --if-present
-
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
@@ -64,7 +47,24 @@ jobs:
           # Optionally extend queries:
           # queries: +security-extended,security-and-quality
 
+      - name: Install dependencies
+        if: matrix.build-mode == 'manual' && matrix.language == 'javascript-typescript'
+        run: |
+          npm ci
+
+      - name: Prisma generate (if present)
+        if: matrix.build-mode == 'manual' && matrix.language == 'javascript-typescript'
+        run: |
+          if npm run | grep -q "prisma:generate"; then
+            npm run prisma:generate
+          fi
+
+      - name: Build
+        if: matrix.build-mode == 'manual' && matrix.language == 'javascript-typescript'
+        run: |
+          npm run build --if-present
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
         with:
-          category: "/language:${{matrix.language}}"
+          category: "/language:${{ matrix.language }}"
