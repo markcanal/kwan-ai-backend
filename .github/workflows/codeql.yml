@@ -26,7 +26,7 @@ jobs:
       matrix:
         include:
           - language: javascript-typescript
-            build-mode: manual
+            build-mode: none
 
     steps:
       - name: Checkout repository
@@ -40,20 +40,19 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        if: matrix.build-mode == 'manual' && matrix.language == 'javascript-typescript'
+        if: matrix.language == 'javascript-typescript'
         run: |
           npm ci
 
       - name: Prisma generate (if present)
-        if: matrix.build-mode == 'manual' && matrix.language == 'javascript-typescript'
+        if: matrix.language == 'javascript-typescript'
         run: |
-          # safe-run prisma generate if script is available
           if npm run | grep -q "prisma:generate"; then
             npm run prisma:generate
           fi
 
-      - name: Build
-        if: matrix.build-mode == 'manual' && matrix.language == 'javascript-typescript'
+      - name: Build (compile TypeScript if present)
+        if: matrix.language == 'javascript-typescript'
         run: |
           npm run build --if-present
 
