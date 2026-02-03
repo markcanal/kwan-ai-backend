@@ -22,6 +22,11 @@ export class FirebaseAuthGuard implements CanActivate {
       request['user'] = decoded;
       return true;
     } catch (err) {
+      // If it's already an UnauthorizedException, rethrow it
+      if (err instanceof UnauthorizedException) {
+        throw err;
+      }
+      
       if (err.code === 'auth/id-token-expired') {
         throw new UnauthorizedException('Token expired');
       }
