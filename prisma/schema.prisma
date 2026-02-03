@@ -37,6 +37,10 @@ model Attendance {
 
   holiday   Holiday? @relation(fields: [holidayId], references: [id])
   holidayId Int?
+
+  @@index([userId])
+  @@index([timestamp])
+  @@index([userId, timestamp])
 }
 
 model Holiday {
@@ -70,4 +74,8 @@ model Payroll {
   pagibig           Float    @default(0)
   isThirteenthMonth Boolean  @default(false)
   createdAt         DateTime @default(now())
+
+  @@unique([userId, month])
+  @@index([userId])
+  @@index([month])
 }
