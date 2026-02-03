@@ -39,6 +39,14 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          # Optionally extend queries:
+          # queries: +security-extended,security-and-quality
+
       - name: Install dependencies
         if: matrix.language == 'javascript-typescript'
         run: |
@@ -55,14 +63,6 @@ jobs:
         if: matrix.language == 'javascript-typescript'
         run: |
           npm run build --if-present
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4
-        with:
-          languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
-          # Optionally extend queries:
-          # queries: +security-extended,security-and-quality
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
